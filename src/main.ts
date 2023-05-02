@@ -3,20 +3,22 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 const cookieSession = require('cookie-session');
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors();
+
   app.use(cookieSession({
     keys: ['asdf']
   }))
   const config = new DocumentBuilder()
-  .setTitle('Reports API')
-  .setDescription('Car sales reports API')
+  .setTitle('SSKJ STOLEN, BABYYYYY API')
+  .setDescription('Words API')
   .setVersion('1.0')
-  .addTag('cats')
+  .addTag('words')
   .build();
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {deepScanRoutes: true});
   SwaggerModule.setup('api', app, document);
   await app.listen(3000);
 }
