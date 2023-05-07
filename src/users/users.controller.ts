@@ -1,15 +1,15 @@
 import {
   Body,
   Controller,
-  Delete,
-  Get,
+  Delete, FileTypeValidator,
+  Get, HttpStatus, MaxFileSizeValidator,
   NotFoundException,
-  Param,
+  Param, ParseFilePipe, ParseFilePipeBuilder,
   Patch,
   Post,
   Query,
-  Session,
-  UseGuards
+  Session, UploadedFile,
+  UseGuards, UseInterceptors
 } from "@nestjs/common";
 import { CreateUserDto } from "./dtos/create-user.dto";
 import { UsersService } from "./users.service";
@@ -20,6 +20,8 @@ import { AuthService } from "./auth.service";
 import { User } from "./user.entity";
 import { CurrentUser } from "./decorators/current-user.decorator";
 import { AuthGuard } from "../guards/auth.guard";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { ApiBody, ApiConsumes } from "@nestjs/swagger";
 
 @Serialize(UserDto)
 @Controller('auth')
@@ -50,6 +52,32 @@ export class UsersController {
     const user = await this.authService.signin(body.email, body.password);
     session.userId = user.id;
     return user
+  }
+
+  @Post('/change-avatar')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async updateAvatar(@UploadedFile(
+     new ParseFilePipe({
+       validators: [
+         new FileTypeValidator({fileType: /png|jpg|jpeg/}),
+         new MaxFileSizeValidator({maxSize: 5000000}),
+       ],
+     })
+   )
+     file: Express.Multer.File, @CurrentUser() user: User) {
+    return this.usersService.updateAvatar(user.id, file);
   }
 
   @Get('/:id')

@@ -16,7 +16,6 @@ async function bootstrap() {
   .setTitle('SSKJ STOLEN, BABYYYYY API')
   .setDescription('Words API')
   .setVersion('1.0')
-  .addTag('words')
   .build();
   const document = SwaggerModule.createDocument(app, config, {deepScanRoutes: true});
   SwaggerModule.setup('api', app, document);

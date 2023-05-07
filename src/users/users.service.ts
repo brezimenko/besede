@@ -25,6 +25,12 @@ export class UsersService {
     return this.repo.findBy({email});
   }
 
+  async updateAvatar(id: number, avatarFile: Express.Multer.File) {
+    const data = avatarFile.buffer.toString('base64');
+    const avatar = `data:${avatarFile.mimetype};base64,${data}`;
+    return this.repo.update(id, { avatar });
+  }
+
   async update(id: number, attrs: Partial<User>) {
     const user = await this.findOne(id);
     if (!user) {
