@@ -13,6 +13,10 @@ export class User {
   @Column()
   password: string;
 
+  @ApiProperty({example: 'f13h1g02i10o3g=!WS.', description: 'Username'})
+  @Column({nullable: true})
+  username: string;
+
   @AfterInsert()
   logInsert() {
     console.log("Inserted User with id", this.id);

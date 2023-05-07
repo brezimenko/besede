@@ -49,7 +49,7 @@ export class WordsService {
   async normalizeWord(word: string) {
     const count = await this.repo.count()
     for (let i = 1; i <= count; i++) {
-      const wordEntity = await this.repo.findOne(i)
+      const wordEntity = await this.repo.findOneBy({id: i})
       Object.assign(wordEntity, {normalizedWord: normalize(wordEntity.word)})
       if (wordEntity.word === word) {
         return wordEntity
@@ -58,7 +58,7 @@ export class WordsService {
   }
 
   async createWord(wordObject: WordCreateDto) {
-    const existingWord = await this.repo.findOne({ word: wordObject.word })
+    const existingWord = await this.repo.findOneBy({ word: wordObject.word })
     if (existingWord) {
       return existingWord
     }
@@ -67,13 +67,13 @@ export class WordsService {
     return this.repo.save(wordEntity)
   }
   getWord(id: number) {
-    return this.repo.findOne(id)
+    return this.repo.findOneBy({id})
   }
 
   async getRandomWord() {
     const numItems = await this.repo.count()
     const randomIndex = Math.ceil(Math.random() * numItems)
-    return this.repo.findOne(randomIndex)
+    return this.repo.findOneBy({id: randomIndex})
   }
 
   async updateWord(id: number, attrs: Partial<WordCreateDto>) {

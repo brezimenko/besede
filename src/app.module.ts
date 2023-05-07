@@ -9,18 +9,14 @@ import { Report } from "./reports/report.entity";
 import { WordsModule } from './words/words.module';
 import { Word } from "./words/word.entity";
 import { PuppeteerModule } from "nest-puppeteer";
+import { dataSourceOptions } from "../db/data-source";
 
 @Module({
   imports: [
     UsersModule,
     ReportsModule,
     PuppeteerModule.forRoot(),
-    TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'db.sqlite',
-      entities: [User, Report, Word],
-      synchronize: true,
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     WordsModule,
   ],
   controllers: [AppController],
