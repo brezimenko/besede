@@ -1,4 +1,5 @@
-import { AfterInsert, AfterRemove, AfterUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { AfterInsert, AfterRemove, AfterUpdate, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Guess } from "../guesses/guess.entity";
 
 @Entity()
 export class User {
@@ -16,6 +17,9 @@ export class User {
 
   @Column({nullable: true})
   avatar: string;
+
+  @OneToMany(() => Guess, guess => guess.user)
+  guesses: Guess[]
 
   @AfterInsert()
   logInsert() {

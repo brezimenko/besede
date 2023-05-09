@@ -8,6 +8,7 @@ import { PuppeteerModule } from "nest-puppeteer";
 @Module({
   controllers: [WordsController],
   providers: [WordsService],
+  exports: [WordsService],
   imports: [TypeOrmModule.forFeature([Word]), PuppeteerModule.forFeature()]
 })
 export class WordsModule {}
