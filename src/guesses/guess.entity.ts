@@ -8,6 +8,8 @@ export class Guess {
   id: number;
   @Column()
   guesses: string
+  @Column()
+  success: boolean
   @ManyToOne(() => User, user => user.guesses)
   user: User
   @ManyToOne(() => Word)

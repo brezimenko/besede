@@ -18,7 +18,10 @@ export class GuessesService {
   }
 
   async createGuess(guess: GuessCreateDto, user: User, word: Word): Promise<Guess> {
-    const createdGuess = this.guessRepository.create({guesses: guess.guesses.join('')})
+    const normalizedWord = word.normalizedWord
+    const uniqueCharacters = [...new Set(normalizedWord.split(''))]
+    const success = (uniqueCharacters.length > guess.guesses.length - 6)
+    const createdGuess = this.guessRepository.create({guesses: guess.guesses.join(''), success})
     createdGuess.user = user
     createdGuess.word = word
     return this.guessRepository.save(createdGuess);
