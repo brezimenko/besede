@@ -15,4 +15,7 @@ export class GuessDto {
   @Transform(({ obj }) => obj.guesses.split(''))
   @Expose()
   guesses: string[];
+  @Transform(({ obj }) => obj.success)
+  @Expose()
+  success: string[];
 }

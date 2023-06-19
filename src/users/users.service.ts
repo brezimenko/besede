@@ -25,6 +25,10 @@ export class UsersService {
     return this.repo.findBy({email});
   }
 
+  findOneByEmail(email: string) {
+    return this.repo.findOneBy({email});
+  }
+
   async updateAvatar(id: number, avatarFile: Express.Multer.File) {
     const data = avatarFile.buffer.toString('base64');
     const avatar = `data:${avatarFile.mimetype};base64,${data}`;

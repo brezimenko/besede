@@ -7,7 +7,10 @@ const cookieSession = require('cookie-session');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  app.enableCors();
+  console.log('process.env.NODE_ENV', process.env.NODE_ENV)
+  if (process.env.NODE_ENV !== 'development') {
+    app.enableCors();
+  }
 
   app.use(cookieSession({
     keys: ['asdf']
@@ -16,6 +19,14 @@ async function bootstrap() {
   .setTitle('SSKJ STOLEN, BABYYYYY API')
   .setDescription('Words API')
   .setVersion('1.0')
+  .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
   .build();
   const document = SwaggerModule.createDocument(app, config, {deepScanRoutes: true});
   SwaggerModule.setup('api', app, document);

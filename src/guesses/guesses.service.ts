@@ -20,7 +20,9 @@ export class GuessesService {
   async createGuess(guess: GuessCreateDto, user: User, word: Word): Promise<Guess> {
     const normalizedWord = word.normalizedWord
     const uniqueCharacters = [...new Set(normalizedWord.split(''))]
-    const success = (uniqueCharacters.length > guess.guesses.length - 6)
+    const areAllCharactersInGuess = uniqueCharacters.every(character => guess.guesses.includes(character))
+    const success = (uniqueCharacters.length > (guess.guesses.length - 6)) && areAllCharactersInGuess
+
     const createdGuess = this.guessRepository.create({guesses: guess.guesses.join(''), success})
     createdGuess.user = user
     createdGuess.word = word

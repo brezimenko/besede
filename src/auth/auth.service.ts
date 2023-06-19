@@ -1,12 +1,13 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { randomBytes, scrypt as _scrypt } from "crypto";
-import { UsersService } from "./users.service";
 import {promisify} from "util";
+import { JwtService } from "@nestjs/jwt";
+import { UsersService } from "../users/users.service";
 
 const scrypt = promisify(_scrypt);
 @Injectable()
 export class AuthService {
-  constructor(private userService: UsersService) {
+  constructor(private userService: UsersService, private jwtService: JwtService) {
   }
 
   async signup(email: string, password: string) {
@@ -38,12 +39,14 @@ export class AuthService {
     if (storedHash !== hash.toString('hex')) {
       throw new BadRequestException('Invalid email or password');
     }
-    return user;
+    const payload = { sub: user.id, email: user.email };
+    return {
+      access_token: await this.jwtService.signAsync(payload),
+    };
     // See if email exists
     // If not, throw an error
     // If email exists, hash the password provided and compare it to the password stored in the database
     // If they match, return the user
     // Otherwise, throw an error
-
   }
 }

@@ -16,44 +16,17 @@ import { UsersService } from "./users.service";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { Serialize } from "../interceptors/serialize-interceptor";
 import { UserDto } from "./dtos/user.dto";
-import { AuthService } from "./auth.service";
 import { User } from "./user.entity";
 import { CurrentUser } from "./decorators/current-user.decorator";
-import { AuthGuard } from "../guards/auth.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ApiBody, ApiConsumes } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiConsumes } from "@nestjs/swagger";
 
-@Serialize(UserDto)
-@Controller('auth')
+@Controller('users')
 export class UsersController {
-  constructor(private usersService: UsersService, private authService: AuthService) {
+  constructor(private usersService: UsersService) {
   }
 
-  @UseGuards(AuthGuard)
-  @Get('/whoami')
-  whoAmI(@CurrentUser() user: User) {
-    return user;
-  }
-
-  @Post('/signout')
-  signOut(@Session() session: any) {
-    session.userId = null;
-  }
-
-  @Post('/signup')
-  async createUser(@Body() body: CreateUserDto, @Session() session: any) {
-    const user = await this.authService.signup(body.email, body.password);
-    session.userId = user.id;
-    return user
-  }
-
-  @Post('/signin')
-  async signin(@Body() body: CreateUserDto, @Session() session: any) {
-    const user = await this.authService.signin(body.email, body.password);
-    session.userId = user.id;
-    return user
-  }
-
+  @ApiBearerAuth()
   @Post('/change-avatar')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -80,23 +53,32 @@ export class UsersController {
     return this.usersService.updateAvatar(user.id, file);
   }
 
+  @ApiBearerAuth()
   @Get('/:id')
+  @Serialize(UserDto)
   async findUser(@Param('id') id: string) {
+    console.log('YOYOYO', id)
     const user = await this.usersService.findOne(parseInt(id));
     return user || new NotFoundException('User not found')
   }
 
+  @ApiBearerAuth()
   @Get()
+  @Serialize(UserDto)
   findAllUsers(@Query('email') email: string) {
     return this.usersService.find(email);
   }
 
+  @ApiBearerAuth()
   @Delete('/:id')
+  @Serialize(UserDto)
   removeUser(@Param('id') id: string) {
     return this.usersService.remove(parseInt(id));
   }
 
+  @ApiBearerAuth()
   @Patch('/:id')
+  @Serialize(UserDto)
   updateUser(@Param('id') id: string, @Body() body: Partial<UpdateUserDto>) {
     return this.usersService.update(parseInt(id), body);
   }
