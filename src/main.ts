@@ -7,10 +7,7 @@ const cookieSession = require('cookie-session');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  console.log('process.env.NODE_ENV', process.env.NODE_ENV)
-  if (process.env.NODE_ENV !== 'development') {
-    app.enableCors();
-  }
+  app.enableCors({credentials: true, origin: 'http://localhost:3001'});
 
   app.use(cookieSession({
     keys: ['asdf']

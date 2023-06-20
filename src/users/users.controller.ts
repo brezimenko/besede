@@ -57,7 +57,6 @@ export class UsersController {
   @Get('/:id')
   @Serialize(UserDto)
   async findUser(@Param('id') id: string) {
-    console.log('YOYOYO', id)
     const user = await this.usersService.findOne(parseInt(id));
     return user || new NotFoundException('User not found')
   }
@@ -79,7 +78,11 @@ export class UsersController {
   @ApiBearerAuth()
   @Patch('/:id')
   @Serialize(UserDto)
-  updateUser(@Param('id') id: string, @Body() body: Partial<UpdateUserDto>) {
-    return this.usersService.update(parseInt(id), body);
+  updateUser(@Param('id') id: string, @Body() body: UpdateUserDto, @CurrentUser() user: User) {
+    if (user.id !== parseInt(id)) {
+      throw new NotFoundException('Can only change username for yourself');
+    }
+    const bodyClean = <Partial<UpdateUserDto>>(body);
+    return this.usersService.update(parseInt(id), bodyClean);
   }
 }
