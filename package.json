@@ -46,6 +46,7 @@
     "puppeteer": "^19.9.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
+    "rxjs": "^7.8.1",
     "sqlite": "^4.2.0",
     "sqlite3": "^5.1.6",
     "swagger-ui-express": "^4.6.3",
